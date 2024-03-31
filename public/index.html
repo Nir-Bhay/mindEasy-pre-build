@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Assessment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- <div class="start">
+        <button>Start</button>
+    </div> -->
+    <div class="container">
+        <h1>Mental Health Assessment Questionnaire</h1>
+        <div id="quiz-container">
+            <div id="question"></div>
+            <div id="options">
+                <!-- <button>Bro maa se baat kar</button> -->
+            </div>
+            <div class="but">
+                <button id="prev-btn" onclick="prevQuestion()">Previous</button>
+                <button id="next-btn" onclick="nextQuestion()">Next</button>
+            </div> <br>
+            <progress id="progress" max="100" value="0"></progress>
+        </div>
+        <div id="chat-container" class="container">
+            <h1>Chat History</h1>
+            <div id="chat-history"></div>
+            <div id="user-input">
+                <input type="text" id="user-message" placeholder="Type your message...">
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

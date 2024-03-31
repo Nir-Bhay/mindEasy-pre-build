@@ -1,0 +1,141 @@
+body {
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    text-align: center;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: #005b7f90;
+}
+
+h1 {
+    color: black;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#quiz-container {
+    width: 900px;
+    height: 550px;
+    margin-top: 50px;
+    padding: 50px;
+    background-color: #005B7F;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    border-radius: 20px;
+    flex-wrap: wrap;
+}
+
+#question {
+    width: 90%;
+    height: 20%;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /* background-color: rebeccapurple; */
+}
+
+#options {
+    width: 70%;
+    height: 30%;
+    font-size: 26px;
+    /* background-color: skyblue; */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+#chat-container {
+    margin-top: 20px;
+}
+
+button {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 20px;
+    font-size: 20px;
+}
+
+button:hover {
+    background-color: #003D55;
+}
+
+progress {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+#chat-container {
+    width: 900px;
+    margin-top: 50px;
+    padding: 50px;
+    background-color: #005B7F;
+    border-radius: 20px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+        justify-content: center;
+        text-align: center;
+}
+
+#chat-container h1 {
+    color: #ffffff;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+#chat-history {
+    overflow-y: auto;
+    max-height: 300px;
+    padding: 10px;
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+#user-input {
+    margin-top: 20px;
+}
+
+#user-message {
+    width: 70%;
+    padding: 10px;
+    border: 2px solid #005B7F;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#send-button {
+    background-color: #005B7F;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#send-button:hover {
+    background-color: #003D55;
+}

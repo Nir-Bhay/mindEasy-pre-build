@@ -1,6 +1,6 @@
 const express = require('express');
-const path = require('path');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const path = require('path');
 require('dotenv').config(); // Load environment variables
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,69 +10,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 // Define the questions for the quiz
-// const questions = [
-//     {
-//         question: "How often do you feel sad or hopeless?",
-//         options: ["😞 Almost every day", "😔 Several days a week", "😐 Occasionally", "🙂 Rarely or never"]
-//     },
-//     {
-//         question: "Do you often worry excessively about various aspects of your life?",
-//         options: ["😥 Yes, all the time", "😰 Quite often", "😕 Sometimes", "😊 Rarely or never"]
-//     },
-//     {
-//         question: "How would you rate your sleep quality?",
-//         options: ["😴 Very poor", "😫 Poor", "😐 Average", "😊 Good"]
-//     },
-//     {
-//         question: "Do you experience frequent mood swings?",
-//         options: ["😢 Yes, very often", "😣 Occasionally", "😐 Rarely", "😊 Never"]
-//     },
-//     {
-//         question: "Have you noticed changes in your appetite (eating significantly more or less than usual)?",
-//         options: ["🍔 Eating significantly more", "🥗 Eating significantly less", "😐 No significant changes", "😊 Not applicable"]
-//     },
-//     {
-//         question: "How often do you feel overwhelmed by stress?",
-//         options: ["😰 Almost constantly", "😥 Frequently", "😐 Occasionally", "🙂 Rarely or never"]
-//     },
-//     {
-//         question: "Do you have trouble concentrating on tasks or making decisions?",
-//         options: ["🤔 Yes, all the time", "😣 Quite often", "😐 Sometimes", "😊 Rarely or never"]
-//     },
-//     {
-//         question: "How often do you experience physical symptoms such as headaches, stomachaches, or muscle tension?",
-//         options: ["😩 Frequently", "😣 Occasionally", "😐 Rarely", "😊 Never"]
-//     },
-//     {
-//         question: "Do you often feel lonely or isolated?",
-//         options: ["😔 Very often", "😣 Sometimes", "😐 Rarely", "😊 Never"]
-//     },
-//     {
-//         question: "Have you ever had thoughts of self-harm or suicide?",
-//         options: ["😨 Yes, frequently", "😣 Occasionally", "😐 Rarely", "😊 Never"]
-//     },
-//     {
-//         question: "How would you rate your overall level of happiness and satisfaction with life?",
-//         options: ["😞 Very unhappy", "😔 Unhappy", "😐 Neutral", "😊 Happy"]
-//     },
-//     {
-//         question: "Do you find it challenging to cope with everyday stressors?",
-//         options: ["😰 Very challenging", "😥 Somewhat challenging", "😐 Occasionally challenging", "😊 Not challenging"]
-//     },
-//     {
-//         question: "Have you experienced any traumatic events in your life that still affect you?",
-//         options: ["😢 Yes, frequently", "😣 Occasionally", "😐 Rarely", "😊 Never"]
-//     },
-//     {
-//         question: "Do you engage in activities that you used to enjoy?",
-//         options: ["😞 Rarely or never", "😔 Occasionally", "😐 Sometimes", "😊 Often"]
-//     },
-//     {
-//         question: "How would you rate your overall energy level and motivation?",
-//         options: ["😫 Very low", "😥 Low", "😐 Average", "😊 High"]
-//     }
-// ];
-
 const questions = [
     {
         question: "Aap kitne dino se udas ya nirash mahsus karte hain?",
@@ -137,68 +74,69 @@ const questions = [
 ];
 
 // Store responses to quiz questions
-let responses = [];
-
-// Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.API_KEY); // Load API key from environment variables
-
-// Store chat history for each user session
-const chatHistory = {};
-
-// Handle sending user message to AI and receiving AI response
-app.post('/chat', async (req, res) => {
-    const { sessionId, message } = req.body;
-    try {
-        // Get or create chat history for the session
-        let sessionChatHistory = chatHistory[sessionId];
-        if (!sessionChatHistory) {
-            sessionChatHistory = [];
-            chatHistory[sessionId] = sessionChatHistory;
-        }
-
-        // Send user message to AI
-        const aiResponse = await runAIModel(message);
-
-        // Add user message and AI response to session chat history
-        sessionChatHistory.push({ sender: 'User', message });
-        sessionChatHistory.push({ sender: 'AI', message: aiResponse });
-
-        // Respond with AI response
-        res.json({ success: true, message: aiResponse });
-    } catch (error) {
-        console.error('Error processing message:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-});
-
-// Function to interact with the AI model
-async function runAIModel(message) {
-    // Use the AI model to generate response based on user message
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const result = await model.generateContent(message);
-    const response = await result.response;
-    const text = response.text();
-    return text;
-}
-
-// Handle fetching quiz questions
-app.get('/questions', (req, res) => {
+app.get('/get-quiz-questions', (req, res) => {
     res.json(questions);
 });
 
-// Handle saving responses to quiz questions
-app.post('/save-response', (req, res) => {
+// Store responses to quiz questions
+const responses = [];
+
+// Handle submitting quiz responses
+app.post('/submit-quiz-response', (req, res) => {
     const response = req.body;
     responses.push(response);
     res.json({ message: 'Response saved successfully.' });
 });
 
-// Handle fetching responses to quiz questions
-app.get('/responses', (req, res) => {
-    res.json(responses);
+
+const formDatas = [];
+app.post('/save-form-data', (req, res) => {
+    const formData = req.body;
+    // console.log('Received form data:', formData);
+    formDatas.push(formData);
+    // Assuming you save the form data to a database or any other storage mechanism
+    res.json({ message: 'Form data saved successfully.' });
 });
+
+  
+app.get('/generate-report', async (req, res) => {
+    // Get the latest form data and quiz responses
+    const latestFormData = formDatas.slice(-1)[0]; // Get the last element of formDatas
+    const report = await generateReport(latestFormData, responses); // Pass correct parameters
+    res.send(report);
+});
+
+
+
+// Initialize the Google Generative AI
+const API_KEY = "AIzaSyAVc-WnP7GATFqMLCjY1i4IT6YsMlJi4p0";
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+// Function to generate the mental health report using AI
+async function generateReport(userData, quizResponses) {
+    // Use relevant information from userData and quizResponses in the prompt
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const prompt = `User Data:\nName: ${userData.name}\nAge: ${userData.age}\nGender: ${userData.gender}\nOccupation: ${userData.occupation}\nDemographic Information: ${userData.demographicInformation}\nEducation: ${userData.education}\nRelationship Status: ${userData.relationshipStatus}\nMedical History: ${userData.medicalHistory}\nHobbies and Interests: ${userData.hobbiesAndInterests}\n\nQuiz Responses:\n`;
+    const responsesText = quizResponses.map((response, index) => `Question ${index + 1}: ${response.question}\nAnswer: ${response.answer}\n`).join('');
+    const context = `${prompt}${responsesText}`;
+    const maxTokens = 1000;
+
+    try {
+        const result = await model.completePrompt(context, maxTokens);
+        return result.data.choices[0].text;
+    } catch (error) {
+        console.error('Error generating report:', error);
+        return 'An error occurred while generating the report.';
+    }
+}
+
+
+// Route to save form data
+
+// Route to generate mental health report
+
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

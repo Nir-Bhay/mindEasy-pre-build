@@ -1,5 +1,105 @@
+document.addEventListener('DOMContentLoaded', function () {
+    const userInfoForm = document.getElementById('mh-user-info-form');
+    const startQuizBtn = document.getElementById('mh-start-quiz');
+
+    userInfoForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission behavior
+
+        // Scroll to the next section smoothly
+        document.querySelector('.main01').style.display = 'block';
+        document.querySelector('.main01').scrollIntoView({
+            behavior: 'smooth'
+        });
+
+        // Serialize form data into JSON format
+        const formData = {
+            name: document.getElementById('mh-name').value,
+            age: document.getElementById('mh-age').value,
+            gender: document.getElementById('mh-gender').value,
+            occupation: document.getElementById('mh-occupation').value,
+            demographicInformation: document.getElementById('mh-demographic-information').value,
+            education: document.getElementById('mh-education').value,
+            relationshipStatus: document.getElementById('mh-relationship-status').value,
+            medicalHistory: document.getElementById('mh-medical-history').value,
+            hobbiesAndInterests: document.getElementById('mh-hobbies-and-interests').value
+        };
+
+        // Send the form data to the server
+        fetch('/save-form-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                console.log('Form data saved successfully:', data);
+                // After form data is saved, trigger report generation
+                generateReport();
+            })
+            .catch(error => {
+                console.error('Error saving form data:', error);
+                // Handle error if needed
+            });
+    });
+
+    // startQuizBtn.addEventListener('click', function () {
+    //     fetch('/quiz')
+    //         .then(response => response.json())
+    //         .then(questions => {
+    //             displayQuestion(questions);
+    //         })
+    //         .catch(error => console.error('Error fetching questions:', error));
+    // });
+
+
+    startQuizBtn.addEventListener('click', function () {
+        fetch('/get-quiz-questions')
+            .then(response => response.json())
+            .then(questions => {
+                displayQuestion(questions);
+            })
+            .catch(error => console.error('Error fetching questions:', error));
+    });
+
+
+
+    // Function to trigger report generation
+    function generateReport() {
+        fetch('/generate-report')
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(report => {
+                // Display the generated report to the user
+                const reportContainer = document.getElementById('report-container');
+                reportContainer.innerText = report;
+            })
+            .catch(error => {
+                console.error('Error generating report:', error);
+                // Handle error if needed
+            });
+    }
+
+    // Function to display the generated report
+    function displayReport(report) {
+        // Assuming you have a div with id 'report-container' to display the report
+        const reportContainer = document.getElementById('report-container');
+        reportContainer.innerText = report;
+    }
+});
+
 let currentQuestion = 0;
-let questions;
+let questions = [];
 
 // Function to display quiz questions
 function displayQuestion(questionsData) {
@@ -29,7 +129,7 @@ function selectOption(optionIndex) {
         answer: questions[currentQuestion].options[optionIndex]
     };
 
-    fetch('/save-response', {
+    fetch('/submit-quiz-response', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -49,8 +149,8 @@ function selectOption(optionIndex) {
                 displayQuestion(questions);
             } else {
                 alert('Quiz completed!');
-                document.getElementById('quiz-container').style.display = 'none';
-                document.getElementById('chat-container').style.display = 'flex';
+                // After quiz completion, trigger report generation
+                generateReport();
             }
         })
         .catch(error => {
@@ -78,73 +178,4 @@ function nextQuestion() {
 function updateProgress() {
     const percent = (currentQuestion / (questions.length - 1)) * 100;
     document.getElementById('progress').value = percent;
-}
-
-// Fetch quiz questions from the server
-fetch('/questions')
-    .then(response => response.json())
-    .then(questions => {
-        displayQuestion(questions);
-    })
-    .catch(error => console.error('Error fetching questions:', error));
-
-// Chat Interface
-const chatHistory = document.getElementById("chat-history");
-const userMessageInput = document.getElementById("user-message");
-const sendButton = document.getElementById("send-button");
-
-// Function to display chat messages
-function displayMessage(sender, message) {
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message");
-    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-    chatHistory.appendChild(messageElement);
-
-    // Scroll to the bottom of the chat history
-    chatHistory.scrollTop = chatHistory.scrollHeight;
-}
-
-// Function to send message to AI
-async function sendMessageToAI(message) {
-    displayMessage("You", message);
-
-    try {
-        const aiResponse = await runAI(message);
-        displayMessage("AI", aiResponse);
-    } catch (error) {
-        console.error("Error sending message to AI:", error);
-        displayMessage("Error", "Failed to send message to AI");
-    }
-}
-
-// Event listener for sending message when button is clicked
-sendButton.addEventListener("click", async () => {
-    const userMessage = userMessageInput.value.trim();
-    if (userMessage !== "") {
-        await sendMessageToAI(userMessage);
-        userMessageInput.value = "";
-    }
-});
-
-// Event listener for sending message when Enter key is pressed
-userMessageInput.addEventListener("keypress", async (event) => {
-    if (event.key === "Enter") {
-        const userMessage = userMessageInput.value.trim();
-        if (userMessage !== "") {
-            await sendMessageToAI(userMessage);
-            userMessageInput.value = "";
-        }
-    }
-});
-
-// Function to interact with AI model
-async function runAI(prompt) {
-    // Replace 'YOUR_API_KEY' with your actual API key
-    const API_KEY = "AIzaSyAVc-WnP7GATFqMLCjY1i4IT6YsMlJi4p0";
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    return text;
 }

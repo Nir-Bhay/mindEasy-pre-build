@@ -10,68 +10,118 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 // Define the questions for the quiz
+// const questions = [
+//     {
+//         question: "Aap kitne dino se udas ya nirash mahsus karte hain?",
+//         options: ["😞 Lagbhag har din", "😔 Kai dinon tak", "😐 Kabhi kabhi", "🙂 Kabhi nahi"]
+//     },
+//     {
+//         question: "Kya aap apne jeevan ke vibhinn pehluon par atyadhik chintit rahte hain?",
+//         options: ["😥 Haan, hamesha", "😰 Kaafi baar", "😕 Kabhi kabhi", "😊 Bahut kam ya kabhi nahi"]
+//     },
+//     {
+//         question: "Aap apni neend ki gunvatta ko kaise darj karenge?",
+//         options: ["😴 Bahut kharab", "😫 Kharab", "😐 Average", "😊 Achha"]
+//     },
+//     {
+//         question: "Kya aap aniyamit roop se bhavna mein parivartan mehsoos karte hain?",
+//         options: ["😢 Haan, bahut baar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+//     },
+//     {
+//         question: "Kya aapne apne bhojan mein parivartan mehsus kiya hai (aam se kai zyada ya kam khana)?",
+//         options: ["🍔 Kai zyada khana", "🥗 Kai kam khana", "😐 Koi mahatvapurn badlav nahi", "😊 Lagoo nahi"]
+//     },
+//     {
+//         question: "Aap kitne samay tak tanav se bhare mahsus karte hain?",
+//         options: ["😰 Lagatar", "😥 Aksar", "😐 Kabhi kabhi", "🙂 Bahut kam ya kabhi nahi"]
+//     },
+//     {
+//         question: "Kya aapko karyaon par dhyan kendrit karne mein ya nirnay lene mein mushkil hoti hai?",
+//         options: ["🤔 Haan, hamesha", "😣 Kaafi baar", "😐 Kabhi kabhi", "😊 Bahut kam ya kabhi nahi"]
+//     },
+//     {
+//         question: "Aap kitni baar sharirik lakshan jaise sir dard, pet dard, ya manspeshiyon ki tanavah mehsoos karte hain?",
+//         options: ["😩 Aksar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+//     },
+//     {
+//         question: "Kya aap aksar akela ya alag mehsoos karte hain?",
+//         options: ["😔 Bahut baar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+//     },
+//     {
+//         question: "Kya aapne kabhi apne aap ko chot pahunchane ya atmahatya ke vichar kiye hain?",
+//         options: ["😨 Haan, aksar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+//     },
+//     {
+//         question: "Aap apne jeevan ki kul khushi aur santushti ka star kaise darj karenge?",
+//         options: ["😞 Bahut khush nahi", "😔 Khush nahi", "😐 Neutral", "😊 Khush"]
+//     },
+//     {
+//         question: "Kya aapko rozmarra ke tanav se samna karna mushkil lagta hai?",
+//         options: ["😰 Bahut mushkil", "😥 Thoda mushkil", "😐 Kabhi kabhi mushkil", "😊 Mushkil nahi"]
+//     },
+//     {
+//         question: "Kya aapne apne jeevan mein koi ghatak ghatnao ka samna kiya hai jo ab bhi aapko prabhavit karta hai?",
+//         options: ["😢 Haan, aksar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+//     },
+//     {
+//         question: "Kya aap voh gatividhiyon mein shamil hote hain jo aap pahle anand lete the?",
+//         options: ["😞 Bahut kam ya kabhi nahi", "😔 Kabhi kabhi", "😐 Kabhi kabhi", "😊 Aksar"]
+//     },
+//     {
+//         question: "Aap apne jeevan ki kul urja star aur prerna ka star kaise darj karenge?",
+//         options: ["😫 Bahut kam", "😥 Kam", "😐 Average", "😊 Uchch"]
+//     }
+// ];
+
+
 const questions = [
     {
-        question: "Aap kitne dino se udas ya nirash mahsus karte hain?",
-        options: ["😞 Lagbhag har din", "😔 Kai dinon tak", "😐 Kabhi kabhi", "🙂 Kabhi nahi"]
+        question: "How often do you feel overwhelmed with your workload?",
+        options: ["😊 Never", "😔 Sometimes", "😥 Often", "😞 Always"]
     },
     {
-        question: "Kya aap apne jeevan ke vibhinn pehluon par atyadhik chintit rahte hain?",
-        options: ["😥 Haan, hamesha", "😰 Kaafi baar", "😕 Kabhi kabhi", "😊 Bahut kam ya kabhi nahi"]
+        question: "Do you feel anxious or stressed about your upcoming exams?",
+        options: ["😞 Strongly disagree", "😔 Disagree", "😐 Neutral", "😊 Agree", "😞 Strongly agree"]
     },
     {
-        question: "Aap apni neend ki gunvatta ko kaise darj karenge?",
-        options: ["😴 Bahut kharab", "😫 Kharab", "😐 Average", "😊 Achha"]
+        question: "Which of the following factors contribute to your stress levels? (Select all that apply)",
+        options: ["Family", "Relationships", "Academics", "Finances", "Work"]
     },
     {
-        question: "Kya aap aniyamit roop se bhavna mein parivartan mehsoos karte hain?",
-        options: ["😢 Haan, bahut baar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+        question: "How many hours of sleep do you typically get per night?",
+        options: ["1 hour or less", "1-3 hours", "3-5 hours", "5 or more hours"]
     },
     {
-        question: "Kya aapne apne bhojan mein parivartan mehsus kiya hai (aam se kai zyada ya kam khana)?",
-        options: ["🍔 Kai zyada khana", "🥗 Kai kam khana", "😐 Koi mahatvapurn badlav nahi", "😊 Lagoo nahi"]
+        question: "Do you find yourself irritable or short-tempered frequently?",
+        options: ["😊 Never", "😢 Rarely", "😔 Sometimes", "😥 Often", "😞 Always"]
     },
     {
-        question: "Aap kitne samay tak tanav se bhare mahsus karte hain?",
-        options: ["😰 Lagatar", "😥 Aksar", "😐 Kabhi kabhi", "🙂 Bahut kam ya kabhi nahi"]
+        question: "Which of the following activities do you utilize as stress relief? (Select all that apply)",
+        options: ["Exercise", "Meditation", "Socializing", "Hobbies", "Therapy"]
     },
     {
-        question: "Kya aapko karyaon par dhyan kendrit karne mein ya nirnay lene mein mushkil hoti hai?",
-        options: ["🤔 Haan, hamesha", "😣 Kaafi baar", "😐 Kabhi kabhi", "😊 Bahut kam ya kabhi nahi"]
+        question: "What specific issues or situations in your life cause you the most stress?",
+        options: ["Exercise", "Meditation", "Socializing", "Hobbies", "Therapy"]
     },
     {
-        question: "Aap kitni baar sharirik lakshan jaise sir dard, pet dard, ya manspeshiyon ki tanavah mehsoos karte hain?",
-        options: ["😩 Aksar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+        question: "Do you often feel overwhelmed or like you have too much on your plate?",
+        options: ["😊 Never", "😢 Rarely", "😔 Sometimes", "😥 Often", "😞 Always"]
     },
     {
-        question: "Kya aap aksar akela ya alag mehsoos karte hain?",
-        options: ["😔 Bahut baar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+        question: "Do you feel like your stress levels are negatively impacting your physical health?",
+        options: ["😞 Strongly disagree", "😔 Disagree", "😐 Neutral", "😊 Agree", "😞 Strongly agree"]
     },
     {
-        question: "Kya aapne kabhi apne aap ko chot pahunchane ya atmahatya ke vichar kiye hain?",
-        options: ["😨 Haan, aksar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
+        question: "Which of the following do you use as a support system for managing stress? (Select all that apply)",
+        options: ["Friends", "Family", "Therapist", "Self-help books", "Online resources"]
     },
     {
-        question: "Aap apne jeevan ki kul khushi aur santushti ka star kaise darj karenge?",
-        options: ["😞 Bahut khush nahi", "😔 Khush nahi", "😐 Neutral", "😊 Khush"]
-    },
-    {
-        question: "Kya aapko rozmarra ke tanav se samna karna mushkil lagta hai?",
-        options: ["😰 Bahut mushkil", "😥 Thoda mushkil", "😐 Kabhi kabhi mushkil", "😊 Mushkil nahi"]
-    },
-    {
-        question: "Kya aapne apne jeevan mein koi ghatak ghatnao ka samna kiya hai jo ab bhi aapko prabhavit karta hai?",
-        options: ["😢 Haan, aksar", "😣 Kabhi kabhi", "😐 Bahut kam", "😊 Kabhi nahi"]
-    },
-    {
-        question: "Kya aap voh gatividhiyon mein shamil hote hain jo aap pahle anand lete the?",
-        options: ["😞 Bahut kam ya kabhi nahi", "😔 Kabhi kabhi", "😐 Kabhi kabhi", "😊 Aksar"]
-    },
-    {
-        question: "Aap apne jeevan ki kul urja star aur prerna ka star kaise darj karenge?",
-        options: ["😫 Bahut kam", "😥 Kam", "😐 Average", "😊 Uchch"]
+        question: "Do you feel like you have a good work-life balance?",
+        options: ["😞 Strongly disagree", "😔 Disagree", "😐 Neutral", "😊 Agree", "😞 Strongly agree"]
     }
 ];
+
+
 
 // Store responses to quiz questions
 app.get('/get-quiz-questions', (req, res) => {
@@ -140,3 +190,7 @@ async function generateReport(userData, quizResponses) {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+
+
+

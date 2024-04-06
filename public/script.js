@@ -2,6 +2,57 @@ document.addEventListener('DOMContentLoaded', function () {
     const userInfoForm = document.getElementById('mh-user-info-form');
     const startQuizBtn = document.getElementById('mh-start-quiz');
 
+    let quizResponses = []; // Initialize an array to store quiz responses
+
+    const questions = [
+        {
+            question: "How often do you feel overwhelmed with your workload?",
+            options: ["😊 Never", "😔 Sometimes", "😥 Often", "😞 Always"]
+        },
+        {
+            question: "Do you feel anxious or stressed about your upcoming exams?",
+            options: ["😞 Strongly disagree", "😔 Disagree", "😐 Neutral", "😊 Agree", "😞 Strongly agree"]
+        },
+        {
+            question: "Which of the following factors contribute to your stress levels? (Select all that apply)",
+            options: ["Family", "Relationships", "Academics", "Finances", "Work"]
+        },
+        {
+            question: "How many hours of sleep do you typically get per night?",
+            options: ["1 hour or less", "1-3 hours", "3-5 hours", "5 or more hours"]
+        },
+        {
+            question: "Do you find yourself irritable or short-tempered frequently?",
+            options: ["😊 Never", "😢 Rarely", "😔 Sometimes", "😥 Often", "😞 Always"]
+        },
+        {
+            question: "Which of the following activities do you utilize as stress relief? (Select all that apply)",
+            options: ["Exercise", "Meditation", "Socializing", "Hobbies", "Therapy"]
+        },
+        {
+            question: "What specific issues or situations in your life cause you the most stress?",
+            options: ["Exercise", "Meditation", "Socializing", "Hobbies", "Therapy"]
+        },
+        {
+            question: "Do you often feel overwhelmed or like you have too much on your plate?",
+            options: ["😊 Never", "😢 Rarely", "😔 Sometimes", "😥 Often", "😞 Always"]
+        },
+        {
+            question: "Do you feel like your stress levels are negatively impacting your physical health?",
+            options: ["😞 Strongly disagree", "😔 Disagree", "😐 Neutral", "😊 Agree", "😞 Strongly agree"]
+        },
+        {
+            question: "Which of the following do you use as a support system for managing stress? (Select all that apply)",
+            options: ["Friends", "Family", "Therapist", "Self-help books", "Online resources"]
+        },
+        {
+            question: "Do you feel like you have a good work-life balance?",
+            options: ["😞 Strongly disagree", "😔 Disagree", "😐 Neutral", "😊 Agree", "😞 Strongly agree"]
+        }
+    ];
+   
+
+
     userInfoForm.addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent default form submission behavior
 
@@ -11,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             behavior: 'smooth'
         });
 
-        // Serialize form data into JSON format
+        // Send the form data along with quiz responses to the server
         const formData = {
             name: document.getElementById('mh-name').value,
             age: document.getElementById('mh-age').value,
@@ -21,7 +72,8 @@ document.addEventListener('DOMContentLoaded', function () {
             education: document.getElementById('mh-education').value,
             relationshipStatus: document.getElementById('mh-relationship-status').value,
             medicalHistory: document.getElementById('mh-medical-history').value,
-            hobbiesAndInterests: document.getElementById('mh-hobbies-and-interests').value
+            hobbiesAndInterests: document.getElementById('mh-hobbies-and-interests').value,
+            quizResponses: quizResponses // Include quiz responses
         };
 
         // Send the form data to the server
@@ -41,141 +93,67 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 console.log('Form data saved successfully:', data);
                 // After form data is saved, trigger report generation
-                generateReport();
+                // generateReport();
             })
             .catch(error => {
                 console.error('Error saving form data:', error);
                 // Handle error if needed
             });
+        
+
     });
-
-    // startQuizBtn.addEventListener('click', function () {
-    //     fetch('/quiz')
-    //         .then(response => response.json())
-    //         .then(questions => {
-    //             displayQuestion(questions);
-    //         })
-    //         .catch(error => console.error('Error fetching questions:', error));
-    // });
-
 
     startQuizBtn.addEventListener('click', function () {
-        fetch('/get-quiz-questions')
-            .then(response => response.json())
-            .then(questions => {
-                displayQuestion(questions);
-            })
-            .catch(error => console.error('Error fetching questions:', error));
+        // Hide the user info form
+        userInfoForm.style.display = 'none';
+
+        // Display quiz questions
+        displayQuestion();
     });
 
+    // Function to display quiz questions
+    function displayQuestion() {
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const currentQuestion = questions[quizResponses.length];
 
+        if (!currentQuestion) {
+            // Quiz completed, show completion message
+            alert('Quiz completed!');
+            document.querySelector('.main01').style.display = 'none';
+            console.log(questions);
+            return;
+        }
 
-    // Function to trigger report generation
-    function generateReport() {
-        fetch('/generate-report')
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                }
-                throw new Error('Network response was not ok.');
-            })
-            .then(report => {
-                // Display the generated report to the user
-                const reportContainer = document.getElementById('report-container');
-                reportContainer.innerText = report;
-            })
-            .catch(error => {
-                console.error('Error generating report:', error);
-                // Handle error if needed
-            });
+        questionElement.innerText = currentQuestion.question;
+        optionsElement.innerHTML = '';
+
+        currentQuestion.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.innerText = option;
+            button.onclick = () => selectOption(index);
+            optionsElement.appendChild(button);
+        });
+
+        updateProgress();
     }
 
-    // Function to display the generated report
-    function displayReport(report) {
-        // Assuming you have a div with id 'report-container' to display the report
-        const reportContainer = document.getElementById('report-container');
-        reportContainer.innerText = report;
+    // Function to handle selecting an option
+    function selectOption(optionIndex) {
+        const response = {
+            question: questions[quizResponses.length].question,
+            answer: questions[quizResponses.length].options[optionIndex]
+        };
+
+        quizResponses.push(response); // Add the quiz response to the array
+
+        // Display next question
+        displayQuestion();
+    }
+
+    // Function to update quiz progress
+    function updateProgress() {
+        const percent = (quizResponses.length / questions.length) * 100;
+        document.getElementById('progress').value = percent;
     }
 });
-
-let currentQuestion = 0;
-let questions = [];
-
-// Function to display quiz questions
-function displayQuestion(questionsData) {
-    questions = questionsData;
-
-    const questionElement = document.getElementById('question');
-    const optionsElement = document.getElementById('options');
-    const currentQues = questions[currentQuestion];
-
-    questionElement.innerText = currentQues.question;
-    optionsElement.innerHTML = '';
-
-    currentQues.options.forEach((option, index) => {
-        const button = document.createElement('button');
-        button.innerText = option;
-        button.onclick = () => selectOption(index);
-        optionsElement.appendChild(button);
-    });
-
-    updateProgress();
-}
-
-// Function to handle selecting an option
-function selectOption(optionIndex) {
-    const response = {
-        question: questions[currentQuestion].question,
-        answer: questions[currentQuestion].options[optionIndex]
-    };
-
-    fetch('/submit-quiz-response', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(response),
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Network response was not ok.');
-        })
-        .then(data => {
-            console.log('Response saved:', data);
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                displayQuestion(questions);
-            } else {
-                alert('Quiz completed!');
-                // After quiz completion, trigger report generation
-                generateReport();
-            }
-        })
-        .catch(error => {
-            console.error('Error saving response:', error);
-        });
-}
-
-// Function to handle previous question
-function prevQuestion() {
-    if (currentQuestion > 0) {
-        currentQuestion--;
-        displayQuestion(questions);
-    }
-}
-
-// Function to handle next question
-function nextQuestion() {
-    if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        displayQuestion(questions);
-    }
-}
-
-// Function to update quiz progress
-function updateProgress() {
-    const percent = (currentQuestion / (questions.length - 1)) * 100;
-    document.getElementById('progress').value = percent;
-}

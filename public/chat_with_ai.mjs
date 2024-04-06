@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const API_KEY = "AIzaSyAnxeTI5b5h5_AsLW33m2YF4Z4IrpU0L5c"; // Replace with your actual API key
+const API_KEY = env.API_KEY; // Replace with your actual API key
 
 const chatHistory = document.getElementById("chat-history");
 const userMessageInput = document.getElementById("user-message");

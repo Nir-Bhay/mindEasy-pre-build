@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const readline = require("readline");
 
-const API_KEY = "AIzaSyCYqcNdsGpYlHtGc21rdpYtIgMuOBgvY50"; // Replace with your actual key
+const API_KEY = env.API_KEY; // Replace with your actual key
 
 // Disclaimer message to be displayed before user interaction
 
